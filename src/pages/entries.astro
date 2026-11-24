@@ -61,7 +61,7 @@ const jsonLd = [
         <button type="submit">Search</button>
       </form>
       <p class="muted" style="margin: 12px 0 24px; font-family: var(--mono); font-size: 0.78rem;">
-        <span data-search-count>{entries.length} provider{entries.length === 1 ? "" : "s"}</span>
+        <span data-search-count aria-live="polite">{entries.length} provider{entries.length === 1 ? "" : "s"}</span>
       </p>
 
       <h2 class="sr-only">Providers</h2>
