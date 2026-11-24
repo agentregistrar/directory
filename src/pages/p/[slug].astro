@@ -26,8 +26,10 @@ const related = getEntries()
   .filter((candidate) => candidate.slug !== entry.slug)
   .slice(0, 3);
 
-const checked = verification?.checked_at
-  ? `Discovery document validated on ${formatDate(verification.checked_at)}.`
+const checked = verification
+  ? verification.status === "valid"
+    ? `Discovery document validated on ${formatDate(verification.checked_at)}.`
+    : `Last check failed on ${formatDate(verification.checked_at)}.`
   : "Not yet checked.";
 const title = `${entry.name} - agent signup support - Agent Registrar Directory`;
 const description = truncate(
