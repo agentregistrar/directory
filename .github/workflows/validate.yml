@@ -6,9 +6,12 @@ on:
   pull_request:
     paths:
       - "data/entries/**"
+      - "data/verification.json"
       - "src/**"
       - "scripts/**"
       - "public/**"
+      - "astro.config.mjs"
+      - "tsconfig.json"
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
