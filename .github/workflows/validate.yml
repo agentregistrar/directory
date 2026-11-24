@@ -1,0 +1,58 @@
+# Before public launch, pin third-party actions by commit SHA.
+
+name: validate
+
+on:
+  pull_request:
+    paths:
+      - "data/entries/**"
+      - "src/**"
+      - "scripts/**"
+      - "public/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/validate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Validate changed entries
+        run: |
+          set -o pipefail
+          pnpm verify --only-changed --check | tee -a "$GITHUB_STEP_SUMMARY"
+      - run: pnpm typecheck
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build

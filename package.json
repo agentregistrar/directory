@@ -1,0 +1,29 @@
+{
+  "name": "agentregistrar-directory",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "tsx scripts/generate-badges.ts && astro dev",
+    "build": "tsx scripts/generate-badges.ts && astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "verify": "tsx scripts/verify.ts"
+  },
+  "dependencies": {
+    "@agentregistrar/discovery": "2.3.0",
+    "@astrojs/sitemap": "3.7.6",
+    "astro": "7.4.13",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

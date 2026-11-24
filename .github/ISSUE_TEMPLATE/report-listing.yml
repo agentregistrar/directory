@@ -1,0 +1,25 @@
+name: Report a listing
+description: Report a problem with a provider listing.
+title: "Report: "
+body:
+  - type: input
+    id: listing
+    attributes:
+      label: Listing URL
+      placeholder: https://agentregistrar.directory/p/...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Describe the problem with the listing.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Links, dates, or other evidence.
+    validations:
+      required: false

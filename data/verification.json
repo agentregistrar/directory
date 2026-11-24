@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-24T13:20:39.350Z",
+  "validator_version": "2.3.0",
+  "entries": {
+    "vaporcloud": {
+      "status": "valid",
+      "kind": "discovery",
+      "source": "https://skdl.dev/.well-known/agent-signup.json",
+      "checked_at": "2026-11-24T13:20:39.350Z",
+      "protocol": "agent-identity-protocol",
+      "protocol_version": "2.0",
+      "audience": "vaporcloud",
+      "provider_name": "VaporCloud",
+      "terms_url": "https://skdl.dev/terms",
+      "counts": {
+        "passed": 25,
+        "failed": 0,
+        "warnings": 1
+      },
+      "errors": [],
+      "warnings": [
+        "transport.cache-control: recommended Cache-Control: public, max-age=60 (maximum 300); received no-store"
+      ]
+    }
+  }
+}

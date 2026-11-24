@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = "Not found - Agent Registrar Directory";
+const description = "The page you requested was not found.";
+---
+
+<BaseLayout title={title} description={description} noindex>
+  <div class="wrap">
+    <div class="prose">
+      <p class="eyebrow">404</p>
+      <h1>Not found.</h1>
+      <p>
+        The page you requested does not exist. Try the
+        <a href="/entries">provider directory</a>, the
+        <a href="/submit">submission guide</a>, or the
+        <a href="/">home page</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,112 @@
+---
+import type { ProviderEntry } from "../lib/entries";
+import { formatDate } from "../lib/format";
+import StatusPill from "./StatusPill.astro";
+
+interface Props {
+  entry: ProviderEntry;
+}
+
+const { entry } = Astro.props;
+const verification = entry.verification;
+const headline = verification
+  ? verification.status === "valid"
+    ? `Discovery document validated on ${formatDate(verification.checked_at)}`
+    : `Last check failed on ${formatDate(verification.checked_at)}`
+  : "Not yet checked";
+const protocol = verification?.protocol ?? "Unknown";
+const version = verification?.protocol_version ?? "Unknown";
+const audience = verification?.audience ?? "Unknown";
+const validator = entry.validatorVersion
+  ? `@agentregistrar/discovery ${entry.validatorVersion}`
+  : "Unknown";
+---
+
+<section class="check-panel" aria-labelledby="check-heading">
+  <h2 id="check-heading">Directory check</h2>
+  {
+    verification ? (
+      <>
+        <div class="check-head">
+          <StatusPill status={entry.status} />
+          <span class="mono">{headline}</span>
+        </div>
+        <dl class="meta-list">
+          <dt>Source</dt>
+          <dd>
+            <a href={verification.source} rel="noopener">
+              {verification.source}
+            </a>
+          </dd>
+          <dt>Protocol</dt>
+          <dd>
+            {protocol} {version}
+          </dd>
+          <dt>Audience</dt>
+          <dd>{audience}</dd>
+          <dt>Validator</dt>
+          <dd>{validator}</dd>
+          <dt>Checks</dt>
+          <dd>
+            {verification.counts.passed} passed, {verification.counts.failed}{" "}
+            failed, {verification.counts.warnings} warning
+            {verification.counts.warnings === 1 ? "" : "s"}
+          </dd>
+        </dl>
+        {verification.warnings.length > 0 && (
+          <details>
+            <summary>
+              {verification.warnings.length} warning
+              {verification.warnings.length === 1 ? "" : "s"}
+            </summary>
+            <ul class="warning-list">
+              {verification.warnings.map((warning) => (
+                <li>{warning}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+        {verification.errors.length > 0 && (
+          <>
+            <p>
+              <strong>This listing is not currently passing.</strong>
+            </p>
+            <ul class="error-list">
+              {verification.errors.map((error) => (
+                <li>{error}</li>
+              ))}
+            </ul>
+          </>
+        )}
+        {verification.status === "valid" ? (
+          <div class="note">
+            <p>
+              <strong>What this means:</strong> The directory fetched the live
+              discovery document on the date shown and it passed the official
+              validator with zero errors. A maintainer reviewed the listing.
+            </p>
+            <p>
+              <strong>What this does not mean:</strong> The directory did not test
+              the signup endpoint, audit the service, or endorse it. Discovery
+              conformance is not a safety, security, or availability rating.
+            </p>
+          </div>
+        ) : (
+          <div class="note">
+            <p>
+              <strong>What happens next:</strong> The provider can fix the
+              discovery document and the next revalidation will update this
+              listing. Listings that stay broken are removed after the grace
+              period.
+            </p>
+          </div>
+        )}
+      </>
+    ) : (
+      <p class="muted">
+        This provider has not been checked yet. Listings are badge-eligible only
+        after a passing check.
+      </p>
+    )
+  }
+</section>

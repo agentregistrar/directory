@@ -1,0 +1,48 @@
+---
+import type { ProviderEntry } from "../lib/entries";
+import { siteUrl } from "../lib/format";
+import CopyButton from "./CopyButton.astro";
+
+interface Props {
+  entry: ProviderEntry;
+}
+
+const { entry } = Astro.props;
+const site = siteUrl();
+const light = `${site}/badges/${entry.slug}.svg`;
+const dark = `${site}/badges/${entry.slug}-dark.svg`;
+const page = `${site}/p/${entry.slug}`;
+const markdown = `[![Agent signup supported](${light})](${page})`;
+const html = `<a href="${page}">\n  <picture>\n    <source media="(prefers-color-scheme: dark)" srcset="${dark}">\n    <img alt="Agent signup supported - listed in the Agent Registrar Directory" src="${light}">\n  </picture>\n</a>`;
+const markdownId = `badge-markdown-${entry.slug}`;
+const htmlId = `badge-html-${entry.slug}`;
+---
+
+<div class="sidebar-card">
+  <h2>Listing badge</h2>
+  <div class="badge-preview">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset={dark} />
+      <img
+        src={light}
+        alt="Agent signup supported - listed in the Agent Registrar Directory"
+        width="200"
+        height="20"
+      />
+    </picture>
+  </div>
+  <p class="muted">Copy one of these into your README.</p>
+  <div class="snippet">
+    <pre><code id={markdownId}>{markdown}</code></pre>
+  </div>
+  <div class="copy-row">
+    <CopyButton target={markdownId} label="Copy Markdown" />
+  </div>
+  <div class="snippet">
+    <pre><code id={htmlId}>{html}</code></pre>
+  </div>
+  <div class="copy-row">
+    <CopyButton target={htmlId} label="Copy HTML" />
+  </div>
+  <p class="muted"><a href="/badge">Badge terms</a></p>
+</div>

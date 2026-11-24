@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EntryCard from "../components/EntryCard.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { getEntries } from "../lib/entries";
+import { siteUrl } from "../lib/format";
+
+const entries = getEntries();
+const site = siteUrl();
+const title = "All providers - Agent Registrar Directory";
+const description =
+  "Browse every provider listed in the Agent Registrar Directory. Each listing shows the discovery document, check date, and validator result.";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: title,
+    url: `${site}/entries`,
+    description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    numberOfItems: entries.length,
+    itemListElement: entries.map((entry, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${site}/p/${entry.slug}`,
+      name: entry.name,
+    })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-header">
+    <div class="wrap">
+      <p class="eyebrow">Directory</p>
+      <h1>All providers</h1>
+      <p>
+        Every provider listed in the Agent Registrar Directory. Each listing
+        shows the live discovery document, the check date, and the validator
+        result.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <form class="search-form" data-search-form role="search">
+        <label class="skip-link" for="provider-search">Search providers</label>
+        <input
+          id="provider-search"
+          data-search-input
+          type="search"
+          name="q"
+          placeholder="Search by name, description, or tag"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+      <p class="muted" style="margin: 12px 0 24px; font-family: var(--mono); font-size: 0.78rem;">
+        <span data-search-count>{entries.length} provider{entries.length === 1 ? "" : "s"}</span>
+      </p>
+
+      <h2 class="sr-only">Providers</h2>
+      {
+        entries.length > 0 ? (
+          <div class="entries-grid">
+            {entries.map((entry) => (
+              <EntryCard entry={entry} />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <p>No providers are listed yet.</p>
+            <p><a href="/submit">Submit the first provider</a>.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <JsonLd data={jsonLd} />
+
+  <script src="/scripts/search.js" defer></script>
+</BaseLayout>

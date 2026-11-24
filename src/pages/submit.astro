@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { siteUrl } from "../lib/format";
+
+const site = siteUrl();
+const title = "Submit a provider - Agent Registrar Directory";
+const description =
+  "Add a provider to Agent Registrar Directory. Publish a conformant discovery document, open a pull request with one YAML file, and pass the official validator.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: title,
+  url: `${site}/submit`,
+  description,
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap">
+    <div class="prose">
+      <p class="eyebrow">Submit</p>
+      <h1>Submit a provider.</h1>
+      <p>
+        Agent Registrar Directory lists services that let AI agents sign up
+        under a verified human owner. If your service publishes a conformant
+        Agent Identity Protocol discovery document, you can submit it with one
+        pull request.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>The check is live.</strong> CI fetches your
+          <code>/.well-known/agent-signup.json</code> and runs the official
+          <code>@agentregistrar/discovery</code> validator. A listing is merged
+          only when the document passes with zero errors. Warnings are recorded
+          but do not block a listing.
+        </p>
+      </div>
+
+      <h2>Before you submit</h2>
+      <ul>
+        <li>
+          Your discovery document is served over HTTPS at
+          <code>https://&lt;your-origin&gt;/.well-known/agent-signup.json</code>.
+        </li>
+        <li>
+          The document passes
+          <code>npx @agentregistrar/discovery validate &lt;your-url&gt; --json</code>
+          with <code>valid: true</code>.
+        </li>
+        <li>
+          You own or maintain the service, or you are authorized to submit it.
+        </li>
+        <li>
+          The description is factual, ASCII, 40-200 characters, and free of
+          marketing superlatives.
+        </li>
+        <li>
+          The contact is a public contact URL or a role email address, not a
+          personal address.
+        </li>
+      </ul>
+
+      <h2>Steps</h2>
+      <ol>
+        <li>Fork <a href="https://github.com/agentregistrar/directory">agentregistrar/directory</a>.</li>
+        <li>
+          Add one file at <code>data/entries/&lt;slug&gt;.yaml</code>. The
+          filename must match the slug.
+        </li>
+        <li>Open a pull request using the template.</li>
+        <li>Wait for CI. Fix any errors and push another commit.</li>
+        <li>
+          A maintainer reviews the entry, records the check in
+          <code>data/verification.json</code>, and merges it. The site rebuilds
+          and the badge becomes available on your listing page.
+        </li>
+      </ol>
+
+      <h2>Template</h2>
+      <pre><code>name: Example Service
+slug: example-service
+description: A factual one or two sentence description of the service and how an agent signs up.
+url: https://example.com
+discovery_url: https://example.com/.well-known/agent-signup.json
+contact: security@example.com
+protocol_version: "2.0"
+tags:
+  - devtools
+added_at: 2026-11-24</code></pre>
+      <p>
+        Use the date you submit in <code>added_at</code>. Optional fields:
+        <code>repo_url</code> and <code>tags</code>.
+      </p>
+
+      <h2>Common failures</h2>
+      <ul>
+        <li>
+          <strong>404 or a non-JSON response.</strong> The discovery document
+          must be live at the exact well-known path and return
+          <code>application/json</code>.
+        </li>
+        <li>
+          <strong>HTTP instead of HTTPS.</strong> Only HTTPS origins are
+          accepted outside local development.
+        </li>
+        <li>
+          <strong>Wrong protocol or version.</strong> The document must use
+          <code>protocol: "agent-identity-protocol"</code> and
+          <code>protocol_version: "2.0"</code>.
+        </li>
+        <li>
+          <strong>Missing audience or terms URL.</strong> Both are required by
+          the protocol.
+        </li>
+        <li>
+          <strong>Bot protection blocks CI.</strong> If your origin blocks
+          automated fetches, a maintainer can run the same command from another
+          network. The check still has to pass.
+        </li>
+        <li>
+          <strong>Description contains a URL or HTML.</strong> Use the dedicated
+          fields and plain text only.
+        </li>
+      </ul>
+
+      <h2>What you get</h2>
+      <ul>
+        <li>A permanent page at <code>/p/&lt;slug&gt;</code>.</li>
+        <li>The <strong>Agent signup | Supported</strong> badge with a link back.</li>
+        <li>Inclusion in <code>entries.json</code> and <code>llms.txt</code>.</li>
+        <li>A dated check record with the exact discovery URL.</li>
+        <li>No fee and no account.</li>
+      </ul>
+
+      <p>
+        Read <a href="/about">what a listing means and does not mean</a> before
+        you submit. Listing is not an endorsement.
+      </p>
+
+      <p>
+        Ready? <a href="https://github.com/agentregistrar/directory">Open a pull request</a>.
+      </p>
+    </div>
+  </div>
+
+  <JsonLd data={jsonLd} />
+</BaseLayout>

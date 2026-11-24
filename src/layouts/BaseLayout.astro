@@ -1,0 +1,88 @@
+---
+import "../styles/global.css";
+import { siteUrl } from "../lib/format";
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+}
+
+const { title, description, noindex = false } = Astro.props;
+const site = siteUrl();
+const canonical = new URL(Astro.url.pathname, site).href;
+const isNoindex = noindex || import.meta.env.PUBLIC_NOINDEX === "true";
+const ogImage = new URL("/og.svg", site).href;
+const current = Astro.url.pathname;
+
+const nav = [
+  { href: "/entries", label: "Directory" },
+  { href: "/badge", label: "Badge" },
+  { href: "/about", label: "About" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {isNoindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Agent Registrar Directory" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="wordmark" href="/">agentregistrar<span>.directory</span></a>
+        <nav class="site-nav" aria-label="Main">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={
+                  current === item.href || current.startsWith(`${item.href}/`)
+                    ? "page"
+                    : undefined
+                }
+              >
+                {item.label}
+              </a>
+            ))
+          }
+          <a class="nav-submit" href="/submit">Submit a provider</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <div>
+          <p><strong>Agent Registrar Directory</strong> is maintained by <a href="https://agentregistrar.dev">Agent Registrar</a>.</p>
+          <p>Listing is not an endorsement. <a href="/about">What this means</a>.</p>
+        </div>
+        <div>
+          <p><a href="/about">About</a> / <a href="/submit">Submit</a> / <a href="/badge">Badge</a> / <a href="https://github.com/agentregistrar/directory">GitHub</a></p>
+          <p>Code Apache-2.0. Data CC BY 4.0.</p>
+        </div>
+      </div>
+    </footer>
+    <script src="/scripts/copy.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+---
+import type { ProviderEntry } from "../lib/entries";
+import { checkedLabel } from "../lib/format";
+import StatusPill from "./StatusPill.astro";
+
+interface Props {
+  entry: ProviderEntry;
+}
+
+const { entry } = Astro.props;
+const search = [entry.name, entry.description, ...entry.tags]
+  .join(" ")
+  .toLowerCase();
+---
+
+<a class="entry-card" href={`/p/${entry.slug}`} data-entry data-search={search}>
+  <div class="entry-card-top">
+    <h3>{entry.name}</h3>
+    <StatusPill status={entry.status} />
+  </div>
+  <p>{entry.description}</p>
+  <div class="entry-card-meta">
+    <span>{checkedLabel(entry)}</span>
+  </div>
+</a>

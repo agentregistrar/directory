@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BadgePreview from "../components/BadgePreview.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { getActiveEntries } from "../lib/entries";
+import { siteUrl } from "../lib/format";
+
+const active = getActiveEntries();
+const example = active[0] ?? null;
+const site = siteUrl();
+const title = "Listing badge - Agent Registrar Directory";
+const description =
+  "The Agent signup | Supported badge for providers listed in the Agent Registrar Directory. Copy the Markdown or HTML snippet into your README.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: title,
+  url: `${site}/badge`,
+  description,
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap">
+    <div class="prose">
+      <p class="eyebrow">Badge</p>
+      <h1>The listing badge.</h1>
+      <p>
+        Every active provider gets a static badge that links to its listing.
+        The badge says <strong>Agent signup | Supported</strong>. It is a simple
+        SVG with light and dark variants, so it renders in a GitHub README in
+        either theme.
+      </p>
+
+      {
+        example ? (
+          <BadgePreview entry={example} />
+        ) : (
+          <div class="empty">
+            <p>The badge becomes available when the first provider is listed.</p>
+          </div>
+        )
+      }
+
+      <h2>What the badge means</h2>
+      <p>
+        The badge means the provider is listed in Agent Registrar Directory and
+        its discovery document passed the official Agent Identity Protocol
+        validator at the date shown on the listing page.
+      </p>
+      <p>
+        It does not mean Agent Registrar tested the signup endpoint, endorses
+        the service, or guarantees availability, security, or fitness. It is not
+        a certification, partnership, or "verified provider" attestation.
+      </p>
+
+      <h2>Terms</h2>
+      <ul>
+        <li>Use the badge only while the provider is listed and active.</li>
+        <li>Do not alter the badge text or imply certification or approval.</li>
+        <li>Remove the badge if the listing is removed or marked failing.</li>
+        <li>
+          The directory may remove the badge file and ask for removal if the
+          terms are violated.
+        </li>
+      </ul>
+      <p>
+        The full terms live in
+        <a href="https://github.com/agentregistrar/directory/blob/main/BADGE-TERMS.md">BADGE-TERMS.md</a>.
+      </p>
+
+      <h2>How to add it</h2>
+      <ol>
+        <li>Open your provider page in the directory.</li>
+        <li>Copy the Markdown or HTML snippet from the sidebar.</li>
+        <li>Paste it into your README.</li>
+        <li>Keep the link to the listing page intact.</li>
+      </ol>
+    </div>
+  </div>
+
+  <JsonLd data={jsonLd} />
+</BaseLayout>

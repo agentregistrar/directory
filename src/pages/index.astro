@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EntryCard from "../components/EntryCard.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { getEntries } from "../lib/entries";
+import { siteUrl } from "../lib/format";
+
+const entries = getEntries();
+const recent = [...entries]
+  .sort((a, b) => b.added_at.localeCompare(a.added_at))
+  .slice(0, 6);
+const validated = entries.filter((entry) => entry.status === "valid").length;
+const site = siteUrl();
+
+const title = "Agent Registrar Directory - services that let AI agents sign up";
+const description =
+  "Agent Registrar's public directory of services that support the Agent Identity Protocol. Every provider listing is checked against a live discovery document.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Agent Registrar Directory",
+  url: site,
+  description,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${site}/entries?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Agent Registrar Directory</p>
+      <h1>Find services that let AI agents sign up.</h1>
+      <p class="lead">
+        Agent Registrar's public directory of services that support the Agent
+        Identity Protocol. Every provider listing is checked against a live
+        discovery document.
+      </p>
+      <form class="search-form" action="/entries" method="get" role="search">
+        <label class="skip-link" for="home-search">Search providers</label>
+        <input
+          id="home-search"
+          type="search"
+          name="q"
+          placeholder="Search providers"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+      <p class="muted" style="margin-top: 16px; font-size: 0.85rem;">{entries.length} provider{entries.length === 1 ? "" : "s"} listed. {validated} with a passing check.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Recently added</h2>
+        <p><a href="/entries">View all providers</a></p>
+      </div>
+      {
+        recent.length > 0 ? (
+          <div class="entries-grid">
+            {recent.map((entry) => (
+              <EntryCard entry={entry} />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <p>No providers are listed yet.</p>
+            <p><a href="/submit">Submit the first provider</a>.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>How a listing works</h2>
+        <p><a href="/submit">Read the criteria</a></p>
+      </div>
+      <ol class="steps">
+        <li>
+          <p class="step-number">01</p>
+          <h3>Publish discovery</h3>
+          <p>
+            Serve a conformant discovery document at
+            <code>/.well-known/agent-signup.json</code> on your canonical HTTPS
+            origin.
+          </p>
+        </li>
+        <li>
+          <p class="step-number">02</p>
+          <h3>Open a pull request</h3>
+          <p>
+            Add one YAML file with your provider name, URL, discovery URL, and a
+            short description.
+          </p>
+        </li>
+        <li>
+          <p class="step-number">03</p>
+          <h3>Get checked and listed</h3>
+          <p>
+            CI runs the official validator. A maintainer reviews the entry, and
+            the listing ships with a badge once it passes.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What this is</h2>
+        <p><a href="/about">About the directory</a></p>
+      </div>
+      <div class="prose" style="padding: 0;">
+        <p>
+          Agent Registrar Directory is built and maintained by Agent Registrar.
+          It lists services that let AI agents sign up with a verified human
+          owner, and it is one of the public surfaces of the Agent Registrar
+          project.
+        </p>
+        <p>
+          A listing means the provider's discovery document was live and passed
+          the official Agent Identity Protocol validator on the date shown. It
+          is not an endorsement, a security audit, or a guarantee that the
+          service is available.
+        </p>
+        <p>
+          Read <a href="/about">what a listing means and does not mean</a>, or
+          go straight to the <a href="/entries">directory</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <JsonLd data={jsonLd} />
+</BaseLayout>

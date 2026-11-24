@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a problem with the site, the validator, or the build.
+title: "Bug: "
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or command
+      placeholder: /entries or pnpm verify
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Browser, Node version, or anything else that helps.
+    validations:
+      required: false

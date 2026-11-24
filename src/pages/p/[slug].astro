@@ -1,0 +1,164 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BadgePreview from "../../components/BadgePreview.astro";
+import CheckPanel from "../../components/CheckPanel.astro";
+import EntryCard from "../../components/EntryCard.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import StatusPill from "../../components/StatusPill.astro";
+import { getEntries, type ProviderEntry } from "../../lib/entries";
+import { contactHref, formatDate, siteUrl, truncate } from "../../lib/format";
+
+export function getStaticPaths() {
+  return getEntries().map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: ProviderEntry;
+}
+
+const { entry } = Astro.props;
+const site = siteUrl();
+const verification = entry.verification;
+const related = getEntries()
+  .filter((candidate) => candidate.slug !== entry.slug)
+  .slice(0, 3);
+
+const checked = verification?.checked_at
+  ? `Discovery document validated on ${formatDate(verification.checked_at)}.`
+  : "Not yet checked.";
+const title = `${entry.name} - agent signup support - Agent Registrar Directory`;
+const description = truncate(
+  `${entry.name} is listed in the Agent Registrar Directory. ${checked} ${entry.description}`,
+);
+
+const links = [
+  { label: "Website", href: entry.url },
+  { label: "Discovery document", href: entry.discovery_url },
+  ...(entry.repo_url
+    ? [{ label: "Repository", href: entry.repo_url }]
+    : []),
+  { label: "Contact", href: contactHref(entry.contact) },
+  ...(verification?.terms_url
+    ? [{ label: "Terms", href: verification.terms_url }]
+    : []),
+];
+
+const editUrl = `https://github.com/agentregistrar/directory/edit/main/data/entries/${entry.slug}.yaml`;
+const reportUrl = `https://github.com/agentregistrar/directory/issues/new?template=report-listing.yml&title=${encodeURIComponent(
+  `Report: ${entry.name}`,
+)}`;
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: entry.name,
+    description: entry.description,
+    url: entry.url,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Agent Registrar Directory",
+      url: site,
+    },
+    ...(verification?.checked_at
+      ? { dateModified: verification.checked_at }
+      : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Directory",
+        item: `${site}/entries`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: entry.name,
+        item: `${site}/p/${entry.slug}`,
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap">
+    <div class="entry-layout">
+      <article>
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Directory</a>
+          <span>/</span>
+          <span>{entry.name}</span>
+        </nav>
+
+        <p class="eyebrow">Provider</p>
+        <h1 class="entry-title">{entry.name}</h1>
+        <p><StatusPill status={entry.status} /></p>
+        <p class="entry-description">{entry.description}</p>
+
+        <ul class="entry-links">
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href} rel="noopener">
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <CheckPanel entry={entry} />
+
+        {
+          related.length > 0 && (
+            <section style="margin-top: 40px;">
+              <div class="section-head">
+                <h2>Other providers</h2>
+                <p><a href="/entries">View all</a></p>
+              </div>
+              <div class="entries-grid">
+                {related.map((candidate) => (
+                  <EntryCard entry={candidate} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </article>
+
+      <aside class="sidebar">
+        {
+          entry.status === "valid" ? (
+            <BadgePreview entry={entry} />
+          ) : (
+            <div class="sidebar-card">
+              <h2>Listing badge</h2>
+              <p class="muted">
+                The badge becomes available when the discovery document passes
+                the next check.
+              </p>
+            </div>
+          )
+        }
+
+        <div class="sidebar-card">
+          <h2>Entry</h2>
+          <p><a href={editUrl} rel="noopener">Edit this entry on GitHub</a></p>
+          <p><a href={reportUrl} rel="noopener">Report an issue with this listing</a></p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <JsonLd data={jsonLd} />
+</BaseLayout>

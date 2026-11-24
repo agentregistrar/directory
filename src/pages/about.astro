@@ -1,0 +1,201 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { siteUrl } from "../lib/format";
+
+const site = siteUrl();
+const title = "About - Agent Registrar Directory";
+const description =
+  "Agent Registrar Directory is maintained by Agent Registrar. Learn what a listing means, what it does not mean, how checks work, and how to remove a listing.";
+
+const faqs = [
+  {
+    question: "What does a listing mean?",
+    answer:
+      "A listing means the provider's discovery document was live and passed the official Agent Identity Protocol validator at the date shown on the listing. A maintainer also reviewed the entry against the published criteria.",
+  },
+  {
+    question: "Does a listing mean Agent Registrar endorses the service?",
+    answer:
+      "No. A listing is not an endorsement, certification, security audit, or guarantee of availability. Agent Registrar did not test the signup endpoint or review the provider's internal security.",
+  },
+  {
+    question: "How does a provider get listed?",
+    answer:
+      "The provider publishes a conformant /.well-known/agent-signup.json, opens a pull request with one YAML file, and passes CI. A maintainer reviews the entry and merges it.",
+  },
+  {
+    question: "How does a provider get removed?",
+    answer:
+      "An owner can request removal at any time. A listing that fails revalidation gets a 30-day grace period. A malicious or impersonating listing is removed immediately.",
+  },
+];
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: title,
+    url: `${site}/about`,
+    description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap">
+    <div class="prose">
+      <p class="eyebrow">About</p>
+      <h1>About Agent Registrar Directory.</h1>
+      <p>
+        Agent Registrar Directory is built and maintained by
+        <a href="https://agentregistrar.dev">Agent Registrar</a>. It lives in
+        the <code>agentregistrar</code> GitHub org and is part of the Agent
+        Registrar project. It is our directory. We do not present it as
+        independent or neutral.
+      </p>
+      <p>
+        The directory lists services that let AI agents sign up under a
+        verified human owner. It is a public, searchable, git-backed index. It
+        is not a marketplace, a signup flow, or the protocol's canonical
+        implementation registry.
+      </p>
+
+      <h2>What a listing means</h2>
+      <ul>
+        <li>
+          The provider's discovery document was live at
+          <code>/.well-known/agent-signup.json</code> on the date shown.
+        </li>
+        <li>
+          The document passed the official
+          <code>@agentregistrar/discovery</code> validator with zero errors.
+        </li>
+        <li>A maintainer reviewed the entry against the published criteria.</li>
+      </ul>
+
+      <h2>What a listing does not mean</h2>
+      <ul>
+        <li>Agent Registrar did not test the signup endpoint end to end.</li>
+        <li>
+          The service is not endorsed, certified, approved, audited, or
+          guaranteed to be safe, secure, reliable, or fairly priced.
+        </li>
+        <li>
+          The service is not a "verified provider" in the protocol's attestation
+          sense. Verification is a separate, optional broker attestation.
+        </li>
+        <li>
+          A listing is not a safety, security, uptime, or compliance rating.
+        </li>
+      </ul>
+
+      <h2>How checks work</h2>
+      <p>
+        CI fetches the provider's live discovery document and runs the official
+        validator. A provider is listed only when the document passes with zero
+        errors. Warnings are recorded on the listing but do not block a check.
+        The exact source URL, validator version, protocol version, audience, and
+        counts are stored in
+        <a href="https://github.com/agentregistrar/directory/blob/main/data/verification.json">data/verification.json</a>.
+      </p>
+      <p>
+        The directory is revalidated weekly. A failing listing is marked as
+        failing and gets a 30-day grace period. If it stays broken, it is
+        removed.
+      </p>
+
+      <h2>The canonical implementation registry</h2>
+      <p>
+        The protocol's canonical implementation registry lives in
+        <a href="https://github.com/agentregistrar/spec/tree/main/registry">agentregistrar/spec/registry</a>.
+        That registry is the protocol record. This directory is the
+        public-facing, searchable, badge-bearing layer. It links to the registry
+        and does not replace it.
+      </p>
+
+      <h2>Removal and corrections</h2>
+      <ul>
+        <li>An owner can request removal at any time.</li>
+        <li>
+          A listing that fails revalidation is marked as failing and gets a
+          30-day grace period.
+        </li>
+        <li>
+          A listing that is malicious, impersonating, or policy-violating is
+          removed immediately.
+        </li>
+        <li>
+          Slugs are permanent so badges and backlinks do not break. A removed
+          slug is never reassigned to a different service.
+        </li>
+        <li>
+          Use the
+          <a href="https://github.com/agentregistrar/directory/issues">GitHub issues</a>
+          for corrections, reports, and removal requests.
+        </li>
+      </ul>
+
+      <h2>Data and licenses</h2>
+      <ul>
+        <li>The site code is Apache-2.0.</li>
+        <li>The directory data and site copy are CC BY 4.0.</li>
+        <li>
+          Provider names and trademarks belong to their owners. The directory
+          does not display logos in V1.
+        </li>
+        <li>
+          There are no paid listings, sponsorships, affiliate links, or featured
+          placement.
+        </li>
+      </ul>
+
+      <h2>Privacy</h2>
+      <ul>
+        <li>No accounts, cookies, or tracking pixels.</li>
+        <li>If analytics are enabled, they are privacy-first and aggregate only.</li>
+        <li>No UTM parameters.</li>
+        <li>
+          Contact fields are public by design. Use a role address or a contact
+          page, not a personal address.
+        </li>
+        <li>
+          Do not include personal data in an entry. The full entry is public and
+          open.
+        </li>
+      </ul>
+
+      <h2>Questions</h2>
+      <div class="faq">
+        {
+          faqs.map((faq) => (
+            <details>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <p style="margin-top: 32px;">
+        Read the <a href="/submit">submission criteria</a>, browse the
+        <a href="/entries">directory</a>, or get the
+        <a href="/badge">badge</a>.
+      </p>
+    </div>
+  </div>
+
+  <JsonLd data={jsonLd} />
+</BaseLayout>
