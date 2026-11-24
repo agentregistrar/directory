@@ -64,18 +64,19 @@ The badge is `Agent signup | Supported`. It is generated only for providers with
 
 Cloudflare Pages:
 
-- Build command: `pnpm build`
-- Output directory: `dist`
-- Node version: 22
-- Production branch: `main`
+1. Create a Pages project connected to the `agentregistrar/directory` GitHub repository.
+2. Build command: `pnpm build`
+3. Output directory: `dist`
+4. Node version: 22
+5. Production branch: `main`
 
 Environment variables:
 
-- `PUBLIC_SITE_URL` - the canonical site URL. Use `https://agentregistrar.directory` in production and the Pages preview URL on preview branches.
+- `PUBLIC_SITE_URL` - the canonical site URL. Before the domain is attached, use the Pages URL and set `PUBLIC_NOINDEX=true`. After the domain is attached, use `https://agentregistrar.directory` and remove the noindex.
 - `PUBLIC_NOINDEX=true` on preview deployments. Every page gets `noindex`, and `robots.txt` disallows all.
 - `PUBLIC_CF_ANALYTICS_TOKEN` - optional, public Cloudflare Web Analytics token.
 
-The domain is attached at public launch. Until then, use a preview URL with `PUBLIC_NOINDEX=true` and do not submit it to search engines.
+The domain is attached at public launch. Until then, use a Pages URL with `PUBLIC_NOINDEX=true` and do not submit it to search engines.
 
 The scaffold ships `public/og.svg` as the Open Graph image. Replace it with a 1200x630 PNG before public launch; social platforms do not reliably render SVG.
 
