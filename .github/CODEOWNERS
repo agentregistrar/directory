@@ -1,7 +1,7 @@
-# Replace the placeholder with the maintainer's GitHub handle before enabling
-# code-owner review in branch protection.
-#
-# Example:
-# * @maintainer-handle
-#
-# * @maintainer-handle
+# Maintainer
+* @sdairs
+
+# Security-sensitive paths
+/.github/workflows/ @sdairs
+/scripts/ @sdairs
+/src/lib/entry-schema.ts @sdairs
