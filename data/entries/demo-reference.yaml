@@ -1,0 +1,12 @@
+name: Reference Provider
+slug: demo-reference
+description: Open-source reference relying party for the Agent Identity Protocol Demo Network. Supports brokered signup, login, step-up approval, and receipts.
+url: https://reference.agentregistrardemorp.com
+discovery_url: https://reference.agentregistrardemorp.com/.well-known/agent-signup.json
+repo_url: https://github.com/agentregistrar/demo-network
+contact: security@agentregistrardemorp.com
+protocol_version: "2.0"
+tags:
+  - reference
+  - open-source
+added_at: 2026-11-24

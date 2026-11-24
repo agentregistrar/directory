@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-24T13:59:42.800Z",
+  "generated_at": "2026-11-24T18:59:39.862Z",
   "validator_version": "2.3.0",
   "entries": {
-    "vaporcloud": {
+    "demo-reference": {
       "status": "valid",
       "kind": "discovery",
-      "source": "https://skdl.dev/.well-known/agent-signup.json",
-      "checked_at": "2026-11-24T13:59:42.800Z",
+      "source": "https://reference.agentregistrardemorp.com/.well-known/agent-signup.json",
+      "checked_at": "2026-11-24T18:59:39.861Z",
       "protocol": "agent-identity-protocol",
       "protocol_version": "2.0",
-      "audience": "vaporcloud",
-      "provider_name": "VaporCloud",
-      "terms_url": "https://skdl.dev/terms",
+      "audience": "demo-reference",
+      "provider_name": "Reference Provider",
+      "terms_url": "https://reference.agentregistrardemorp.com/terms",
       "counts": {
-        "passed": 25,
+        "passed": 24,
         "failed": 0,
         "warnings": 1
       },
