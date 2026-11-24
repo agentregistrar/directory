@@ -2,8 +2,6 @@
 
 Agent Registrar's public directory of services that let AI agents sign up. The repository is the database: one YAML file per provider. A pull request triggers CI, CI fetches the provider's live discovery document and runs the official Agent Identity Protocol validator, and a maintainer merges the listing. The site is a static Astro build.
 
-This is Agent Registrar's directory. It lives in the `agentregistrar` GitHub org and is part of the Agent Registrar project. It does not pretend to be independent or neutral.
-
 ## Status
 
 The repository is public. The site is not deployed and the domain `agentregistrar.directory` is not attached yet. Deployment and the domain are operator-controlled.
