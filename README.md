@@ -6,7 +6,7 @@ This is Agent Registrar's directory. It lives in the `agentregistrar` GitHub org
 
 ## Status
 
-Local build. The public repo, domain, and deployment are operator-controlled. The domain `agentregistrar.directory` is not attached yet.
+The repository is public. The site is not deployed and the domain `agentregistrar.directory` is not attached yet. Deployment and the domain are operator-controlled.
 
 ## Requirements
 
