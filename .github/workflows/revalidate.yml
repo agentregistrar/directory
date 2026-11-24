@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 jobs:
@@ -30,8 +29,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Revalidate providers
         continue-on-error: true
-        run: pnpm verify --write
-      - name: Open a pull request for verification changes
+        run: |
+          set -o pipefail
+          pnpm verify --write | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Publish the revalidation branch and issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -40,37 +41,26 @@ jobs:
             echo "No verification changes."
             exit 0
           fi
+
           branch="revalidate/$(date -u +%Y-%m-%d)"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
           git add data/verification.json
           git commit -m "chore: revalidate providers"
-          git push origin "$branch"
-          if gh pr list --head "$branch" --json number --jq '.[0].number' | grep -q .; then
-            echo "A revalidation pull request already exists for $branch."
-          else
-            gh pr create \
-              --title "Revalidate providers" \
-              --body "Automated revalidation of the provider entries. Review the verification diff and merge if the checks are correct." \
-              --head "$branch" \
-              --base main
-          fi
-      - name: Report failing providers
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
+          git push --force origin "$branch"
+
+          compare="https://github.com/${GITHUB_REPOSITORY}/compare/main...${branch}?expand=1"
           failing=$(jq -r '.entries | to_entries[] | select(.value.status == "failing") | "- `\(.key)`"' data/verification.json)
-          if [ -z "$failing" ]; then
-            echo "No failing providers."
-            exit 0
+          body="Automated revalidation changed \`data/verification.json\`."$'\n\n'"Open a pull request from the branch:"$'\n'"$compare"
+          if [ -n "$failing" ]; then
+            body="$body"$'\n\n'"Failing providers:"$'\n'"$failing"
           fi
+
           gh label create revalidation --color FBCA04 --description "Automated provider revalidation" 2>/dev/null || true
-          body="Revalidation found failing providers:"$'\n\n'"$failing"
           existing=$(gh issue list --label revalidation --state open --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
           else
-            gh issue create --title "Provider revalidation failures" --body "$body" --label revalidation
+            gh issue create --title "Provider revalidation updates" --body "$body" --label revalidation
           fi
